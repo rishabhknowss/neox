@@ -66,3 +66,30 @@ export async function neoxTransfer(fromChain, toChain, amount, tokenAddress, rec
     const signer = walletDetails.signer;
     await transferTokens(fromChain, toChain, amount, tokenAddress, recipientAddress, signer);
 }
+
+export async function getBalance(chain, tokenAddress) {
+    let signer;
+    let balance;
+
+    if (chain === 'neox') {
+        const walletDetails = await neoxConnect('neox');
+        signer = walletDetails.signer;
+
+        const neoxContract = new ethers.Contract(tokenAddress, NEOX_ABI, signer);
+        balance = await neoxContract.balanceOf(walletDetails.address);
+    } else if (chain === 'neo') {
+        if (neoline) {
+            const account = await neoline.getAccount();
+            const address = account.address;
+
+            const neoN3Contract = new ethers.Contract(tokenAddress, NEO_N3_ABI, signer);
+            balance = await neoN3Contract.balanceOf(address);
+        } else {
+            throw new Error("NeoLine wallet not found or not ready. Please make sure NeoLine is installed.");
+        }
+    } else {
+        throw new Error("Invalid chain type. Use 'neox' for NeoX-compatible tokens or 'neo' for Neo tokens.");
+    }
+
+    return ethers.utils.formatUnits(balance, 18); // Adjust the decimal based on the token's decimal places
+}
