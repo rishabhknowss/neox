@@ -43,7 +43,33 @@ connectWallet('neox');
 connectWallet('neo');
 ```
 
-### 2. Transferring Tokens
+### 2. Get Balance from Wallets
+
+To fetch balance from wallet, use the `getBalance` function:
+
+```javascript
+import { getBalance } from 'neox-connector';
+
+async function checkBalance() {
+    const chain = 'neox'; // or 'neo'
+    const tokenAddress = '0xYourTokenAddress'; // Token contract address
+
+    try {
+        const balance = await getBalance(chain, tokenAddress);
+        console.log(`Balance: ${balance}`);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+// Check the balance
+checkBalance();
+```
+
+
+
+
+### 3. Transferring Tokens
 
 To transfer tokens between NeoX and Neo N3, use the `neoxTransfer` function:
 
